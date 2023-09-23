@@ -28,12 +28,12 @@
 #include "usb_device_descriptor.h"
 #include "virtual_com.h"
 
-
+#define BUFFER_LENGTH  100
 
 int main(void)
 {
 
-	uint8_t buffer_rx[100];
+	uint8_t buffer_rx[BUFFER_LENGTH];
 	uint32_t bytes_recibidos;
 
 	BOARD_InitPins();
