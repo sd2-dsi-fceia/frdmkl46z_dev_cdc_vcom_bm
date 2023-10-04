@@ -65,7 +65,7 @@ void USB_DeviceClockInit(void);
 void USB_DeviceIsrEnable(void);
 void USB_AppInit(void);
 int32_t virtual_com_recv(uint8_t *pBuf, int32_t size);
-int32_t virtual_com_send(char *pBuf, int32_t size);
+int32_t virtual_com_send(uint8_t *pBuf, int32_t size);
 
 usb_status_t USB_DeviceCdcVcomCallback(class_handle_t handle, uint32_t event, void *param);
 usb_status_t USB_DeviceCallback(usb_device_handle handle, uint32_t event, void *param);
@@ -115,10 +115,11 @@ static usb_device_class_config_list_struct_t s_cdcAcmConfigList = {
     s_cdcAcmConfig, USB_DeviceCallback, 1,
 };
 
+/*==================[external functions definition]==========================*/
 
-/*******************************************************************************
-* Code
-******************************************************************************/
+
+
+
 #if (defined(USB_DEVICE_CONFIG_KHCI) && (USB_DEVICE_CONFIG_KHCI > 0U))
 void USB0_IRQHandler(void)
 {
@@ -488,49 +489,10 @@ void USB_AppInit(void)
     USB_DeviceRun(s_cdcVcom.deviceHandle);
 }
 
-/*!
- * @brief Application task function.
- *
- * This function runs the task for application.
- *
- * @return None.
- */
-void APPTask(void)
-{
-    usb_status_t error = kStatus_USB_Error;
-    if ((1 == s_cdcVcom.attach) && (1 == s_cdcVcom.startTransactions))
-    {
-        /* User Code */
-        if ((0 != s_recvSize) && (0xFFFFFFFFU != s_recvSize))
-        {
-            int32_t i;
-
-            /* Copy Buffer to Send Buff */
-            for (i = 0; i < s_recvSize; i++)
-            {
-                s_currSendBuf[s_sendSize++] = s_currRecvBuf[i];
-            }
-            s_recvSize = 0;
-        }
-
-        if (s_sendSize)
-        {
-            uint32_t size = s_sendSize;
-            s_sendSize = 0;
-
-            error = USB_DeviceCdcAcmSend(s_cdcVcom.cdcAcmHandle, USB_CDC_VCOM_BULK_IN_ENDPOINT, s_currSendBuf, size);
-
-            if (error != kStatus_USB_Success)
-            {
-                /* Failure to send Data Handling code here */
-            }
-        }
-
-    }
-}
 
 
-int32_t virtual_com_send(char *pBuf, int32_t size)
+
+int32_t virtual_com_send(uint8_t *pBuf, int32_t size)
 {
 	usb_status_t error = kStatus_USB_Error;
 
@@ -553,7 +515,6 @@ int32_t virtual_com_send(char *pBuf, int32_t size)
 int32_t virtual_com_recv(uint8_t *pBuf, int32_t size)
 {
 	uint32_t s_recvSize_aux = 0;
-
 	int32_t i;
 
 	if ((1 == s_cdcVcom.attach) && (1 == s_cdcVcom.startTransactions))
@@ -585,9 +546,9 @@ int32_t virtual_com_recv(uint8_t *pBuf, int32_t size)
 	    		 s_recvSize = 0;
 	    		 return -1; // Indica que se truncó el buffer de recepción
 	    	 }
-
 	    }
 	}
 }
 
+/*==================[end of file]============================================*/
 
