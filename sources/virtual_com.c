@@ -115,11 +115,9 @@ static usb_device_class_config_list_struct_t s_cdcAcmConfigList = {
     s_cdcAcmConfig, USB_DeviceCallback, 1,
 };
 
-/*==================[external functions definition]==========================*/
 
 
-
-
+/*==================[internal functions definition]==========================*/
 #if (defined(USB_DEVICE_CONFIG_KHCI) && (USB_DEVICE_CONFIG_KHCI > 0U))
 void USB0_IRQHandler(void)
 {
@@ -492,6 +490,12 @@ void USB_AppInit(void)
 
 
 
+/** \brief envía datos por puerto USB emulando puerto serie COM
+ **
+ ** \param[inout] pBuf buffer a donde estan los datos a enviar
+ ** \param[in] size tamaño del buffer
+ ** \return cantidad de bytes enviados
+ **/
 int32_t virtual_com_send(uint8_t *pBuf, int32_t size)
 {
 	usb_status_t error = kStatus_USB_Error;
@@ -504,14 +508,27 @@ int32_t virtual_com_send(uint8_t *pBuf, int32_t size)
 
 			if (error != kStatus_USB_Success)
 			{
-						/* Failure to send Data Handling code here */
+				/* Failure to send Data Handling code here */
+				size = 0; // No se enviaron bytes por error de USB
+				return size;
 			}
+			else return size; // Retorna la cantidad de bytes enviados
 		}
+	}
+	else
+	{
+		size = 0; // No se enviaron bytes por no estar listas las condiciones de USB
+		return size;
 	}
 }
 
-
-
+/** \brief recibe datos por puerto USB emulando puerto serie COM
+ **
+ ** \param[inout] pBuf buffer a donde guardar los datos
+ ** \param[in] size tamaño del buffer
+ ** \return cantidad de bytes recibidos. Si retorna -1 la cantidad
+ ** de bytes recibidas es mayor al buffer de recepción utilizado.
+ **/
 int32_t virtual_com_recv(uint8_t *pBuf, int32_t size)
 {
 	uint32_t s_recvSize_aux = 0;
@@ -549,6 +566,8 @@ int32_t virtual_com_recv(uint8_t *pBuf, int32_t size)
 	    }
 	}
 }
+
+/*==================[external functions definition]==========================*/
 
 /*==================[end of file]============================================*/
 
