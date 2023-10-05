@@ -82,7 +82,8 @@ int main(void)
     {
     	bytes_recibidos = virtual_com_recv(buffer_rx, sizeof(buffer_rx));
 
-    	if(bytes_recibidos) virtual_com_send(buffer_rx, bytes_recibidos);
+    	if(bytes_recibidos)
+    		virtual_com_send(buffer_rx, bytes_recibidos);
 
     }
 }
