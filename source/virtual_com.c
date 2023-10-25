@@ -499,6 +499,7 @@ void USB_AppInit(void)
 int32_t virtual_com_send(uint8_t *pBuf, int32_t size)
 {
 	usb_status_t error = kStatus_USB_Error;
+	int32_t size_aux;
 
 	if ((1 == s_cdcVcom.attach) && (1 == s_cdcVcom.startTransactions))
 	{
@@ -509,17 +510,24 @@ int32_t virtual_com_send(uint8_t *pBuf, int32_t size)
 			if (error != kStatus_USB_Success)
 			{
 				/* Failure to send Data Handling code here */
-				size = 0; // No se enviaron bytes por error de USB
-				return size;
+				size_aux = 0; // No se enviaron bytes por error de USB
 			}
-			else return size; // Retorna la cantidad de bytes enviados
+			else
+			{
+				size_aux = size; // almacena en size_aux la cantidad de bytes enviados
+			}
+		}
+		else
+		{
+			size_aux = 0;
 		}
 	}
 	else
 	{
-		size = 0; // No se enviaron bytes por no estar listas las condiciones de USB
-		return size;
+		size_aux = 0; // No se enviaron bytes por no estar listas las condiciones de USB
 	}
+
+	return size_aux; // Retorna cantidad de bytes enviados
 }
 
 /** \brief recibe datos por puerto USB emulando puerto serie COM
