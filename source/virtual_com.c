@@ -545,12 +545,12 @@ int32_t virtual_com_recv(uint8_t *pBuf, int32_t size)
 	if ((1 == s_cdcVcom.attach) && (1 == s_cdcVcom.startTransactions))
 	{
 
-		/* User Code */
+
 	    if ((0 != s_recvSize) && (0xFFFFFFFFU != s_recvSize))
 	    {
 
-	    	 /* Copy Buffer to Send Buff */
-	    	 if(s_recvSize <= size)
+
+	    	 if(s_recvSize <= size) // Copia Buffer de recepción USB al buffer de recepción
 	    	 {
 				 for (i = 0; i < s_recvSize; i++)
 				 {
@@ -559,7 +559,6 @@ int32_t virtual_com_recv(uint8_t *pBuf, int32_t size)
 
 				 s_recvSize_aux = s_recvSize;
 				 s_recvSize = 0;
-				 return s_recvSize_aux;
 	    	 }
 	    	 else
 	    	 {
@@ -569,10 +568,12 @@ int32_t virtual_com_recv(uint8_t *pBuf, int32_t size)
 	    		 }
 
 	    		 s_recvSize = 0;
-	    		 return -1; // Indica que se truncó el buffer de recepción
+	    		 s_recvSize_aux = -1; // Indica que se truncó el buffer de recepción
 	    	 }
 	    }
 	}
+
+	return s_recvSize_aux;
 }
 
 /*==================[external functions definition]==========================*/
