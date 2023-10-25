@@ -101,7 +101,6 @@ USB_DMA_INIT_DATA_ALIGN(USB_DATA_ALIGN_SIZE) static uint8_t s_countryCode[COMM_F
 USB_DMA_NONINIT_DATA_ALIGN(USB_DATA_ALIGN_SIZE) static usb_cdc_acm_info_t s_usbCdcAcmInfo;
 /* Data buffer for receiving and sending*/
 USB_DMA_NONINIT_DATA_ALIGN(USB_DATA_ALIGN_SIZE) static uint8_t s_currRecvBuf[DATA_BUFF_SIZE];
-USB_DMA_NONINIT_DATA_ALIGN(USB_DATA_ALIGN_SIZE) static uint8_t s_currSendBuf[DATA_BUFF_SIZE];
 volatile static uint32_t s_recvSize = 0;
 volatile static uint32_t s_sendSize = 0;
 
@@ -509,8 +508,7 @@ int32_t virtual_com_send(uint8_t *pBuf, int32_t size)
 
 			if (error != kStatus_USB_Success)
 			{
-				/* Failure to send Data Handling code here */
-				size_aux = 0; // No se enviaron bytes por error de USB
+				size_aux = 0; // No se enviaron bytes por error de manipulación de datos de USB
 			}
 			else
 			{
