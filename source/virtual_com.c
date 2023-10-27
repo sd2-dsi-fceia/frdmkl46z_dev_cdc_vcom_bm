@@ -116,12 +116,9 @@ typedef struct _usb_cdc_acm_info
 } usb_cdc_acm_info_t;
 
 /*==================[internal functions declaration]=========================*/
-void BOARD_InitHardware(void);
-void USB_DeviceClockInit(void);
-void USB_DeviceIsrEnable(void);
+static void USB_DeviceClockInit(void);
+static void USB_DeviceIsrEnable(void);
 void USB_AppInit(void);
-int32_t virtual_com_recv(uint8_t *pBuf, int32_t size);
-int32_t virtual_com_send(uint8_t *pBuf, int32_t size);
 
 usb_status_t USB_DeviceCdcVcomCallback(class_handle_t handle, uint32_t event, void *param);
 usb_status_t USB_DeviceCallback(usb_device_handle handle, uint32_t event, void *param);
@@ -179,7 +176,7 @@ void USB0_IRQHandler(void)
     USB_DeviceKhciIsrFunction(s_cdcVcom.deviceHandle);
 }
 #endif
-void USB_DeviceClockInit(void)
+static void USB_DeviceClockInit(void)
 {
 #if defined(USB_DEVICE_CONFIG_KHCI) && (USB_DEVICE_CONFIG_KHCI > 0U)
     SystemCoreClockUpdate();
@@ -192,7 +189,7 @@ void USB_DeviceClockInit(void)
 
 #endif
 }
-void USB_DeviceIsrEnable(void)
+static void USB_DeviceIsrEnable(void)
 {
     uint8_t irqNumber;
 #if defined(USB_DEVICE_CONFIG_KHCI) && (USB_DEVICE_CONFIG_KHCI > 0U)

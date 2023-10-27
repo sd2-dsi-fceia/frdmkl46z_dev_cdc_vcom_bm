@@ -42,5 +42,12 @@
 
 /*==================[macros and typedef]=====================================*/
 
+/*==================[external data declaration]==============================*/
+
+/*==================[external functions declaration]=========================*/
+
+int32_t virtual_com_recv(uint8_t *pBuf, int32_t size);
+int32_t virtual_com_send(uint8_t *pBuf, int32_t size);
+
 /*==================[end of file]============================================*/
 #endif /* _USB_CDC_VCOM_H_ */
