@@ -166,8 +166,6 @@ static usb_device_class_config_list_struct_t s_cdcAcmConfigList = {
     s_cdcAcmConfig, USB_DeviceCallback, 1,
 };
 
-
-
 /*==================[internal functions definition]==========================*/
 #if (defined(USB_DEVICE_CONFIG_KHCI) && (USB_DEVICE_CONFIG_KHCI > 0U))
 void USB0_IRQHandler(void)
@@ -175,6 +173,7 @@ void USB0_IRQHandler(void)
     USB_DeviceKhciIsrFunction(s_cdcVcom.deviceHandle);
 }
 #endif
+
 static void USB_DeviceClockInit(void)
 {
 #if defined(USB_DEVICE_CONFIG_KHCI) && (USB_DEVICE_CONFIG_KHCI > 0U)
@@ -507,13 +506,8 @@ usb_status_t USB_DeviceCallback(usb_device_handle handle, uint32_t event, void *
     return error;
 }
 
-/*!
- * @brief Application initialization function.
- *
- * This function initializes the application.
- *
- * @return None.
- */
+/*==================[external functions definition]==========================*/
+
 void virtual_com_init(void)
 {
     USB_DeviceClockInit();
@@ -538,46 +532,37 @@ void virtual_com_init(void)
     USB_DeviceRun(s_cdcVcom.deviceHandle);
 }
 
-
-
-
-/** \brief envía datos por puerto USB emulando puerto serie COM
- **
- ** \param[inout] pBuf buffer a donde estan los datos a enviar
- ** \param[in] size tamaño del buffer
- ** \return cantidad de bytes enviados
- **/
 int32_t virtual_com_send(uint8_t *pBuf, int32_t size)
 {
-	usb_status_t error = kStatus_USB_Error;
-	int32_t size_aux;
+    usb_status_t error = kStatus_USB_Error;
+    int32_t size_aux;
 
-	if ((1 == s_cdcVcom.attach) && (1 == s_cdcVcom.startTransactions))
-	{
-		if (size)
-		{
-			error = USB_DeviceCdcAcmSend(s_cdcVcom.cdcAcmHandle, USB_CDC_VCOM_BULK_IN_ENDPOINT, pBuf, size);
+    if ((1 == s_cdcVcom.attach) && (1 == s_cdcVcom.startTransactions))
+    {
+        if (size)
+        {
+            error = USB_DeviceCdcAcmSend(s_cdcVcom.cdcAcmHandle, USB_CDC_VCOM_BULK_IN_ENDPOINT, pBuf, size);
 
-			if (error != kStatus_USB_Success)
-			{
-				size_aux = 0; // No se enviaron bytes por error de manipulación de datos de USB
-			}
-			else
-			{
-				size_aux = size; // almacena en size_aux la cantidad de bytes enviados
-			}
-		}
-		else
-		{
-			size_aux = 0;
-		}
-	}
-	else
-	{
-		size_aux = 0; // No se enviaron bytes por no estar listas las condiciones de USB
-	}
+            if (error != kStatus_USB_Success)
+            {
+                size_aux = 0; // No se enviaron bytes por error de manipulación de datos de USB
+            }
+            else
+            {
+                size_aux = size; // almacena en size_aux la cantidad de bytes enviados
+            }
+        }
+        else
+        {
+            size_aux = 0;
+        }
+    }
+    else
+    {
+        size_aux = 0; // No se enviaron bytes por no estar listas las condiciones de USB
+    }
 
-	return size_aux; // Retorna cantidad de bytes enviados
+    return size_aux; // Retorna cantidad de bytes enviados
 }
 
 /** \brief recibe datos por puerto USB emulando puerto serie COM
@@ -589,44 +574,38 @@ int32_t virtual_com_send(uint8_t *pBuf, int32_t size)
  **/
 int32_t virtual_com_recv(uint8_t *pBuf, int32_t size)
 {
-	uint32_t s_recvSize_aux = 0;
-	int32_t i;
+    uint32_t s_recvSize_aux = 0;
+    int32_t i;
 
-	if ((1 == s_cdcVcom.attach) && (1 == s_cdcVcom.startTransactions))
-	{
+    if ((1 == s_cdcVcom.attach) && (1 == s_cdcVcom.startTransactions))
+    {
+        if ((0 != s_recvSize) && (0xFFFFFFFFU != s_recvSize))
+        {
+             if(s_recvSize <= size) // Copia Buffer de recepción USB al buffer de recepción
+             {
+                 for (i = 0; i < s_recvSize; i++)
+                 {
+                     pBuf[i] = s_currRecvBuf[i];
+                 }
 
+                 s_recvSize_aux = s_recvSize;
+                 s_recvSize = 0;
+             }
+             else
+             {
+                 for (i = 0; i < size; i++)
+                 {
+                    pBuf[i] = s_currRecvBuf[i];
+                 }
 
-	    if ((0 != s_recvSize) && (0xFFFFFFFFU != s_recvSize))
-	    {
+                 s_recvSize = 0;
+                 s_recvSize_aux = -1; // Indica que se truncó el buffer de recepción
+             }
+        }
+    }
 
-
-	    	 if(s_recvSize <= size) // Copia Buffer de recepción USB al buffer de recepción
-	    	 {
-				 for (i = 0; i < s_recvSize; i++)
-				 {
-					 pBuf[i] = s_currRecvBuf[i];
-				 }
-
-				 s_recvSize_aux = s_recvSize;
-				 s_recvSize = 0;
-	    	 }
-	    	 else
-	    	 {
-	    		 for (i = 0; i < size; i++)
-	    		 {
-	    		 	pBuf[i] = s_currRecvBuf[i];
-	    		 }
-
-	    		 s_recvSize = 0;
-	    		 s_recvSize_aux = -1; // Indica que se truncó el buffer de recepción
-	    	 }
-	    }
-	}
-
-	return s_recvSize_aux;
+    return s_recvSize_aux;
 }
-
-/*==================[external functions definition]==========================*/
 
 /*==================[end of file]============================================*/
 

@@ -46,9 +46,31 @@
 
 /*==================[external functions declaration]=========================*/
 
+/*!
+ * @brief Application initialization function.
+ *
+ * This function initializes the application.
+ *
+ * @return None.
+ */
 void virtual_com_init(void);
-int32_t virtual_com_recv(uint8_t *pBuf, int32_t size);
+
+/** \brief envía datos por puerto USB emulando puerto serie COM
+ **
+ ** \param[inout] pBuf buffer a donde estan los datos a enviar
+ ** \param[in] size tamaño del buffer
+ ** \return cantidad de bytes enviados
+ **/
 int32_t virtual_com_send(uint8_t *pBuf, int32_t size);
+
+/** \brief recibe datos por puerto USB emulando puerto serie COM
+ **
+ ** \param[inout] pBuf buffer a donde guardar los datos
+ ** \param[in] size tamaño del buffer
+ ** \return cantidad de bytes recibidos. Si retorna -1 la cantidad
+ ** de bytes recibidas es mayor al buffer de recepción utilizado.
+ **/
+int32_t virtual_com_recv(uint8_t *pBuf, int32_t size);
 
 /*==================[end of file]============================================*/
 #endif /* _USB_CDC_VCOM_H_ */
