@@ -76,7 +76,7 @@ int main(void)
 
 	BOARD_InitPins();
     BOARD_BootClockRUN();
-    USB_AppInit();
+    virtual_com_init();
 
     while (1)
     {

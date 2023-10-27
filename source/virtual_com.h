@@ -46,6 +46,7 @@
 
 /*==================[external functions declaration]=========================*/
 
+void virtual_com_init(void);
 int32_t virtual_com_recv(uint8_t *pBuf, int32_t size);
 int32_t virtual_com_send(uint8_t *pBuf, int32_t size);
 

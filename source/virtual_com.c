@@ -118,7 +118,6 @@ typedef struct _usb_cdc_acm_info
 /*==================[internal functions declaration]=========================*/
 static void USB_DeviceClockInit(void);
 static void USB_DeviceIsrEnable(void);
-void USB_AppInit(void);
 
 usb_status_t USB_DeviceCdcVcomCallback(class_handle_t handle, uint32_t event, void *param);
 usb_status_t USB_DeviceCallback(usb_device_handle handle, uint32_t event, void *param);
@@ -515,7 +514,7 @@ usb_status_t USB_DeviceCallback(usb_device_handle handle, uint32_t event, void *
  *
  * @return None.
  */
-void USB_AppInit(void)
+void virtual_com_init(void)
 {
     USB_DeviceClockInit();
 
