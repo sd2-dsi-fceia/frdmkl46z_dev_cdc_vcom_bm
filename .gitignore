@@ -4,8 +4,8 @@
 /**/RemoteSystemsTempFiles
 /**/Debug
 *.launch
-*.cproject
-*.project
+#*.cproject
+#*.project
 .settings
 
 # Own makefile or mine template
